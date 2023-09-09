@@ -1,0 +1,42 @@
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.nav {
+  padding: 30px;
+  background-color: #d7bbbb;
+  border-radius: 20px;
+  margin-bottom: 10px;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+}
+
+.item {
+  gap: 20px;
+  display: flex;
+  padding: 20px;
+  border: 1px solid #989898;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  background-color: #e8e8e8;
+}
+
+.image {
+  border-radius: 10px;
+}
+
+.title {
+  margin: 0;
+}
+
+.film_card {
+  gap: 40px;
+  display: flex;
+  padding: 20px;
+  border: 1px solid black;
+  border-radius: 20px;
+}
