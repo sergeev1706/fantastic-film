@@ -7,10 +7,12 @@ const handlebars = expressHandlebars.create({
   defaultLayout: 'main',
   extname: 'hbs',
   helpers: {
+
     getTitle: obj => obj.title,
     getImagePath: obj => obj.imgPath,
     getLink: obj => obj.link,
-    getTRanslit: obj => obj.translit
+    getTRanslit: obj => obj.translit,
+    getId: obj => obj.id
   }
 });
 
@@ -47,6 +49,7 @@ let getData = async () => {
 
     for (var element of elements) {
 
+      let id = element.id
       let title = element.title
       let imgPath = 'https://www.film.ru' + element.childNodes[1].childNodes[1].getAttribute('data-src')
       let link = element.childNodes[3].href
@@ -54,6 +57,7 @@ let getData = async () => {
       // console.log(new XMLSerializer().serializeToString(element.childNodes[5]));
 
       films.push({ // Помещаею объект с данными в массив
+        id,
         title,
         imgPath,
         link,
