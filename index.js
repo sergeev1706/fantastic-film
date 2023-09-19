@@ -1,22 +1,28 @@
 
 import express from 'express'
 import expressHandlebars from 'express-handlebars';
-import puppeteer from 'puppeteer';
+import { start } from './parser.js';
+import { genres } from './genres.js';
 
 const handlebars = expressHandlebars.create({
   defaultLayout: 'main',
   extname: 'hbs',
   helpers: {
-
-    getTitle: obj => obj.title,
-    getImagePath: obj => obj.imgPath,
+    getId: obj => obj.id,
+    getName: obj => obj.name,
+    getTranslit: obj => obj.translit,
+    getImagePath: obj => obj.imagePath,
+    getYear: obj => obj.year,
+    getRating: obj => obj.rating,
     getLink: obj => obj.link,
-    getTRanslit: obj => obj.translit,
-    getId: obj => obj.id
+    getDescription: obj => {
+      let str = obj.descr
+      return str.split('.')[0] + ' ...'
+    },
   }
 });
 
-let app = express()
+let app = express();
 
 app.engine('hbs', handlebars.engine);
 app.set('view engine', 'hbs');
@@ -30,67 +36,44 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname + '/public/'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-let getData = async () => {
-  const browser = await puppeteer.launch({ headless: 'new' });
-  const page = await browser.newPage();
-  const URL = 'https://www.film.ru/a-z/movies/science_fiction'
-  await page.goto(URL);
+app.get('/', async (req, res) => {
 
-  const result = await page.evaluate(() => {
-
-    function getTranslit(str) {
-      let result = str.split('/')
-      return result[result.length - 1]
-    }
-
-    let films = []; // Создю пустой массив для хранения данных
-
-    let elements = document.querySelectorAll('.film_list'); // Выбирю все фильмы
-
-    for (var element of elements) {
-
-      let id = element.id
-      let title = element.title
-      let imgPath = 'https://www.film.ru' + element.childNodes[1].childNodes[1].getAttribute('data-src')
-      let link = element.childNodes[3].href
-
-      // console.log(new XMLSerializer().serializeToString(element.childNodes[5]));
-
-      films.push({ // Помещаею объект с данными в массив
-        id,
-        title,
-        imgPath,
-        link,
-        translit: getTranslit(link)
-      });
-    }
-
-    return films; // Возвращаю массив
-  });
-
-  browser.close();
-  return result; // Возвращаю данные
-};
-
-let movies = await getData()
-
-app.get('/', (req, res) => {
+  let movies = await start('fantastika')
   res.render('allFilms', {
-    title: 'title',
-    movies: movies
+    title: 'Все фильмы',
+    movies: movies,
+    genres: genres
   })
 });
 
-app.get('/film/:name', (req, res) => {
-  let film
-  for (const movie of movies) {
-    if (movie.translit === req.params.name) film = movie
-  }
+app.get('/:genre', async (req, res) => {
 
-  res.render('film', {
-    film: film
+  let movies = await start(req.params.genre)
+
+  let result
+  for (const genre of genres) {
+    if (genre.link === `/${req.params.genre}/`) result = genre.translit
+  }
+  res.render('allFilms', {
+    title: `Фильмы жанра ${result}`,
+    movies: movies,
+    genres: genres
   })
-})
+});
+
+// app.get('/film/:name', (req, res) => {
+//   let film
+//   for (const movie of movies) {
+//     if (movie.translit === req.params.name) {
+//       film = movie
+//     }
+//   }
+
+//   res.render('film', {
+//     title: film.name,
+//     film: film
+//   })
+// })
 
 app.use(function (req, res) {
   res.status(404).send('not found');

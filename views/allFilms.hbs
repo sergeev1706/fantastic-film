@@ -1,14 +1,31 @@
-<ul class="list">
-  {{#each movies}}
-  <li class="item">
-    <a href="/film/{{getTRanslit.}}">
-      <img class="image" width="100" src="{{getImagePath.}}">
-    </a>
-    <div class="description">
-      <h3 class="title">{{getTitle.}}</h3>
-      <p>{{getId.}}</p>
-
-    </div>
-  </li>
-  {{/each}}
-</ul>
+<div class="asd">
+  <div class="genre">
+    <ul>
+      {{#each genres}}
+      <li>
+        <a href="{{getLink.}}">{{getTranslit.}}</a>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+  <div>
+    <ul>
+      {{#each movies}}
+      <li class="item">
+        <div>
+          <h2>{{getId.}}</h2>
+          <img class="image" width="100" src="{{getImagePath.}}">
+          <h4>{{getYear.}} год</h4>
+          <h4>рейтинг {{getRating.}}.</h4>
+        </div>
+        </a>
+        <div class="description">
+          <h2 class="title">{{getName.}}</h2>
+          <p>{{getDescription.}}</p>
+          <a href="/film/{{getTranslit.}}">смотреть фильм</a>
+        </div>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>

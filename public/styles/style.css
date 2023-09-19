@@ -10,9 +10,23 @@
   margin-bottom: 10px;
 }
 
-.list {
+ul {
   list-style: none;
   padding: 0;
+  margin: 0;
+}
+
+.asd {
+  display: flex;
+}
+
+.genre {
+  min-width: 130px;
+  padding: 20px;
+  margin-right: 10px;
+  border: 1px solid #989898;
+  border-radius: 20px;
+  background-color: #ffdede;
 }
 
 .item {
@@ -21,12 +35,16 @@
   padding: 20px;
   border: 1px solid #989898;
   border-radius: 20px;
-  margin-bottom: 10px;
   background-color: #e8e8e8;
+}
+
+.item:not(:last-child) {
+  margin-bottom: 10px;
 }
 
 .image {
   border-radius: 10px;
+  object-fit: scale-down;
 }
 
 .title {
@@ -36,7 +54,25 @@
 .film_card {
   gap: 40px;
   display: flex;
-  padding: 20px;
+  align-items: flex-start;
+  padding: 20px 50px 20px 30px;
   border: 1px solid black;
   border-radius: 20px;
+}
+
+.info {
+  display: flex;
+  justify-content: space-between;
+}
+
+.descr {
+  border-radius: 30px 10px;
+  padding: 30px 30px;
+  background-color: rgb(222, 255, 175);
+}
+
+.actors {
+  border-radius: 10px 30px;
+  padding: 10px 30px;
+  background-color: rgb(255, 244, 190);
 }

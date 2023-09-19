@@ -1,8 +1,26 @@
 <div class="film_card">
-  <img class="image" src="{{film.imgPath}}">
   <div>
-    <h1 class="title">{{film.title}}</h1>
-    <a href="{{getLink.}}" target="_blank">смотреть фильм</a>
+    <h2>{{film.year}} год</h2>
+    <img class="image" src="{{film.imagePath}}">
+    <h3>Режисёр:<br><br> {{film.director}}</h3>
+  </div>
+  <div>
+    <h1 class="title">{{film.name}}</h1>
+    <p class="descr">{{film.descr}}</p>
 
+    <div class="info">
+      <div class="actors">
+        <P>Актёрский состав:
+        <ul>
+          {{#each film.actors}}
+          <li>{{.}}</li>
+          {{/each}}
+        </ul>
+        </P>
+      </div>
+      <div class="rating">
+        <h3>Рейтинг: {{film.rating}}</h3>
+      </div>
+    </div>
   </div>
 </div>
