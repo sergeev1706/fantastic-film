@@ -72,10 +72,13 @@ for (let i = 1; i <= countPages; i++) {
   pages.push(i);
 }
 
-app.get('/', async (req, res) => {
+// === main ===========================
 
+app.get('/', async (req, res) => {
   res.redirect('/page/1');
 });
+
+// === paginated list =================
 
 app.get('/page/:num', async (req, res) => {
 
@@ -94,6 +97,8 @@ app.get('/page/:num', async (req, res) => {
   })
 });
 
+// === film page ======================
+
 app.get('/film/:name', (req, res) => {
   let film;
   for (const movie of movies) {
@@ -109,7 +114,7 @@ app.get('/film/:name', (req, res) => {
   })
 })
 
-// === comments =======================
+// === comments on the film ===========
 
 app.get('/comments/:film', (req, res) => {
   res.render('comments', {
@@ -143,7 +148,7 @@ app.post('/comments/:film', (req, res) => {
   })
 })
 
-// === rating =========================
+// === rating of the film =============
 
 app.get('/rating/:film', (req, res) => {
 
@@ -175,7 +180,7 @@ app.post('/rating/:film', (req, res) => {
   })
 })
 
-// ==================
+// ====================================
 
 app.use(function (req, res) {
   res.status(404).send('not found');
