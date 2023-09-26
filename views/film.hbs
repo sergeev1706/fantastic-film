@@ -1,6 +1,6 @@
 <div class="film_card">
   <div>
-    <h2>{{film.year}} год</h2>
+    <h2>{{film.year}}</h2>
     <img class="image" src="{{film.imagePath}}">
     <h3>Режисёр:<br><br> {{film.director}}</h3>
   </div>
@@ -20,7 +20,38 @@
       </div>
       <div class="rating">
         <h3>Рейтинг: {{film.rating}}</h3>
+        {{#if film.isMy_rating}}
+        <h3>Ещё щдин рейтинг: {{getRatingString film}}</h3>
+        {{/if}}
+        <p class="show">
+          <a href="{{film.link}}" target="_blank">смотреть фильм на Tvigle.ru</a>
+        </p>
+        <p class="comment-link">
+          <a href="/comments/{{film.translit}}">оставить комментарии</a>
+        </p>
+        <p class="rating-link">
+          <a href="/rating/{{film.translit}}">оценить фильм</a>
+        </p>
       </div>
     </div>
   </div>
 </div>
+
+{{#if film.isComments}}
+<div class="wrapper-comments">
+  <h1>comments</h1>
+
+  <ul>
+    {{#each comments}}
+    <li class="comment-item">
+      {{getCommentDate.}}
+      {{!-- оставлен комментарий --}}
+      <p class="comment-text">
+        {{getCommentText.}}
+      </p>
+    </li>
+    {{/each}}
+  </ul>
+
+</div>
+{{/if}}

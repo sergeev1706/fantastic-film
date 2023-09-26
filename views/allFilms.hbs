@@ -1,5 +1,15 @@
-<div class="asd">
-  <div class="genre">
+<div class="pagination-wrapper">
+
+  <div class="pagination">
+    <a class="pagination-link asd" href="/page/{{goBackPage page}}">назад</a>
+    <p class="pagination-link page">{{page}}</p>
+    <a class="pagination-link asd" href="/page/{{goNextPage page allPages}}">вперёд</a>
+  </div>
+</div>
+
+<div class="cards">
+
+  {{!-- <div class="genre">
     <ul>
       {{#each genres}}
       <li>
@@ -7,25 +17,41 @@
       </li>
       {{/each}}
     </ul>
-  </div>
+  </div> --}}
+
   <div>
     <ul>
       {{#each movies}}
       <li class="item">
         <div>
-          <h2>{{getId.}}</h2>
-          <img class="image" width="100" src="{{getImagePath.}}">
-          <h4>{{getYear.}} год</h4>
-          <h4>рейтинг {{getRating.}}.</h4>
+          <img class="image" width="200" src="{{getImagePath.}}">
+          <h4>{{getYear.}}</h4>
+          <h4>Рейтинг {{getRating.}}</h4>
+          {{#if isMy_rating}}
+          <h4>Ещё один рейтинг {{getRatingString.}}</h4>
+          {{/if}}
+          <h2 class="item-number">{{getId.}}</h2>
         </div>
         </a>
-        <div class="description">
+        <div>
           <h2 class="title">{{getName.}}</h2>
-          <p>{{getDescription.}}</p>
-          <a href="/film/{{getTranslit.}}">смотреть фильм</a>
+          <div>
+            <p class="descr-film">{{getDescription.}}</p>
+          </div>
+          <a class="page-film" href="/film/{{getTranslit.}}">на страницу фильма</a>
         </div>
       </li>
       {{/each}}
     </ul>
   </div>
+</div>
+
+<div class="pagination-wrapper">
+  <ul class="pagination">
+    {{#each pages}}
+    <li class="page-bottom page">
+      <a class="page-link" href="/page/{{.}}">{{.}}</a>
+    </li>
+    {{/each}}
+  </ul>
 </div>
