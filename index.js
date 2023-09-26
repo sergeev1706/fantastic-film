@@ -148,7 +148,7 @@ app.post('/comments/:film', (req, res) => {
   })
 })
 
-// === rating of the film =============
+// === rating of the film =========================
 
 app.get('/rating/:film', (req, res) => {
 
@@ -180,7 +180,7 @@ app.post('/rating/:film', (req, res) => {
   })
 })
 
-// ====================================
+// ==================
 
 app.use(function (req, res) {
   res.status(404).send('not found');

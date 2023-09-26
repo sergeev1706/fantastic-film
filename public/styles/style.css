@@ -230,3 +230,11 @@ h2 {
   background-color: #277129;
   transition: 400ms linear;
 }
+
+textarea {
+  padding: 20px;
+  background-color: #cbf4a7;
+  border: none;
+  border-radius: 20px;
+  resize: none;
+}
