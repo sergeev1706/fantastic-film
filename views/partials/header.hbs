@@ -1,5 +1,40 @@
 <div class="container">
   <nav class="nav">
-    <a href="/">в начало</a>
+    <div>
+      <a href="/">в начало</a>
+      {{#unless isList}}
+      <a href="/page/{{pageNum}}">назад</a>
+      {{/unless}}
+    </div>
+
+    {{#if isList}}
+    <form action="/filter/" class="header_form" method="POST">
+
+      <select name="year_select" id="">
+        <option value="">year</option>
+        {{#each years}}
+        <option>{{.}}</option>
+        {{/each}}
+      </select>
+
+      <select name="country_select" id="">
+        <option value="">country</option>
+        {{#each countrys}}
+        <option value="{{.}}">{{.}}</option>
+        {{/each}}
+      </select>
+
+      <select name="rating_select" id="">
+        <option value="">rating</option>
+        {{#each ratings}}
+        <option value="{{.}}">{{.}}</option>
+        {{/each}}
+      </select>
+
+      <button type="submit">применить</button>
+
+    </form>
+    {{/if}}
+
   </nav>
 </div>

@@ -1,5 +1,4 @@
 
-
 function addZero(num) {
   return num < 10 ? '0' + num : num;
 }
@@ -9,15 +8,9 @@ export function getDate() {
   let year = now.getFullYear();
   let month = addZero(now.getMonth());
   let date = addZero(now.getDate());
-  return `${date}.${month}.${year}`;
+
+  let hours = addZero(now.getHours());
+  let minutes = addZero(now.getMinutes());
+  return `${date}.${month}.${year} в ${hours}:${minutes}`;
 }
 
-// export function getRating(arr) {
-//   let sum;
-
-//   for (const elem of arr) {
-//     sum = sum + Number(elem);
-//   }
-
-//   return sum / arr.length;
-// }

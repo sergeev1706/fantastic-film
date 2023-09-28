@@ -27,6 +27,7 @@ export async function start() {
     let allElem = await page.$$('div.styles_collectionList__qqJDT > a');
 
     for (let i = 1; i <= allElem.length; i++) {
+      // for (let i = 1; i <= 5; i++) {
       let selector = `div.styles_collectionList__qqJDT > a:nth-child(${i})`;
 
       await page.waitForSelector(selector);
@@ -64,8 +65,12 @@ export async function start() {
         film.actors = [... new Set(actors)];;
         film.translit = film.link.split('/')[film.link.split('/').length - 2];
         film.comments = [];
+        film.isComments = false;
+
+
         film.my_rating = [];
         film.isMy_rating = false;
+
 
         console.log(film);
 

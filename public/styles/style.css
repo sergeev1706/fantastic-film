@@ -4,10 +4,20 @@
 }
 
 .nav {
+  justify-content: space-between;
+  display: flex;
   padding: 30px;
   background-color: #d7bbbb;
   border-radius: 20px;
   margin-bottom: 10px;
+}
+
+.nav select {
+  margin-right: 15px;
+}
+
+.nav a {
+  margin-right: 30px;
 }
 
 ul {
@@ -67,7 +77,7 @@ h2 {
   gap: 40px;
   display: flex;
   align-items: flex-start;
-  padding: 20px 50px 20px 30px;
+  padding: 20px 30px;
   border: 1px solid #333;
   border-radius: 20px;
   margin-bottom: 20px;
@@ -170,13 +180,16 @@ h2 {
 }
 
 .red {
+  outline: 2px solid red;
+  border-radius: 20px;
+  outline-offset: 7px;
   color: red;
 }
 
 /* comments */
 
 .wrapper-comments {
-  padding: 20px 50px 20px 30px;
+  padding: 20px 30px;
   border: 1px solid #333;
   border-radius: 20px;
 }
@@ -210,6 +223,27 @@ h2 {
   transition: 400ms linear;
 }
 
+.link_to_film {
+  text-decoration: none;
+}
+
+.link_to_film,
+.add_comment {
+  padding: 10px 20px;
+  background-color: #5879fd;
+  border-radius: 30px;
+  color: #fff;
+  font-size: 1.5rem;
+  border: none;
+}
+
+.link_to_film:hover,
+.add_comment:hover {
+  background-color: #214dff;
+  transition: 400ms linear;
+
+}
+
 /* rating */
 
 .rating-link {
@@ -237,4 +271,43 @@ textarea {
   border: none;
   border-radius: 20px;
   resize: none;
+}
+
+.name {
+  color: red;
+}
+
+#rating_btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 30px;
+  background-color: #36fa43;
+  font-size: 1.5rem;
+}
+
+/* initial */
+
+.center {
+  text-align: center;
+}
+
+.init-input {
+  font-size: 1.5rem;
+  background-color: #a5fc85;
+  border-radius: 15px;
+  border: none;
+  padding: 10px 40px;
+}
+
+.init-btn {
+  border: none;
+  background-color: #4b7ffa;
+  border-radius: 15px;
+  padding: 10px 20px;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.disable {
+  display: none;
 }

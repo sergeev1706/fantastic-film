@@ -39,13 +39,14 @@
 
 {{#if film.isComments}}
 <div class="wrapper-comments">
-  <h1>comments</h1>
+  <h1>comments: </h1>
 
   <ul>
     {{#each comments}}
     <li class="comment-item">
+      <span class="name">{{getCommentAutor.}}</span>
+      оставил комментарии
       {{getCommentDate.}}
-      {{!-- оставлен комментарий --}}
       <p class="comment-text">
         {{getCommentText.}}
       </p>

@@ -1,8 +1,13 @@
-<h1>
-  rating {{film}}
-</h1>
+<div class="center">
+  <h1>
+    {{filmName}}
+  </h1>
+  <h2>
+    оцените фильм до десяти баллов
+  </h2>
 
-<form action="/rating/{{film}}" method="POST">
-  <input type="text" name="rating"><br /><br />
-  <button type="submit">оценить</button>
-</form>
+  <form action="/rating/{{filmTranslit}}" method="POST">
+    <input class="center" autofocus id="rating_inp" type="text" name="rating"><br /><br />
+    <button id="rating_btn" type="submit">оценить</button>
+  </form>
+</div>
