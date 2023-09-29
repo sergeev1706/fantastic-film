@@ -16,8 +16,31 @@
   margin-right: 15px;
 }
 
+select,
+.nav button {
+  padding: 5px 15px;
+  border-radius: 10px;
+  border: none;
+}
+
+select:focus {
+  outline: none;
+}
+
+.nav button {
+  background-color: #958181;
+  color: #fff
+}
+
+.nav button:hover {
+  background-color: #6a5a5a;
+  transition: 400ms linear;
+}
+
 .nav a {
   margin-right: 30px;
+  font-size: 24px;
+  text-decoration: none;
 }
 
 ul {

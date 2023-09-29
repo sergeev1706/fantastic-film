@@ -19,9 +19,9 @@
         </P>
       </div>
       <div class="rating">
-        <h3>Рейтинг: {{film.rating}}</h3>
+        <h3>Рейтинг Tvigle.ru: {{film.rating}}</h3>
         {{#if film.isMy_rating}}
-        <h3>Ещё один рейтинг: {{getRatingString film}}</h3>
+        <h3>Рейтинг этого сайта: {{getRatingString film}}</h3>
         {{/if}}
         <p class="show">
           <a href="{{film.link}}" target="_blank">смотреть фильм на Tvigle.ru</a>

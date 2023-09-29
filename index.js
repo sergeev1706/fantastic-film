@@ -157,8 +157,8 @@ app.post('/filter/', (req, res) => {
 
   filterFor.map((el, ind) => el.id = ind + 1);
 
-  let asd = false
-  if (filterFor.length === 0) asd = true
+  let noFind = false
+  if (filterFor.length === 0) noFind = true
 
   res.render('allFilms', {
     title: `применены фильтры ${y ? y : ''} ${c ? c : ''} ${r ? 'рейтинг ' + r : ''}`,
@@ -166,7 +166,7 @@ app.post('/filter/', (req, res) => {
     years: arrFilmsYears,
     countrys: arrFilmCountry,
     ratings: arrFilmRating,
-    asd,
+    noFind,
     isFilter: false,
     pageNum: PAGE,
   })
@@ -225,6 +225,7 @@ app.post('/comments/:film', (req, res) => {
     title: film.name,
     film: film,
     comments: film.comments,
+    pageNum: PAGE,
   })
 })
 
@@ -278,6 +279,7 @@ app.post('/rating/:film', (req, res) => {
     title: film.name,
     film: film,
     comments: film.comments,
+    pageNum: PAGE,
   })
 })
 
