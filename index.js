@@ -4,8 +4,8 @@ import cookieParser from 'cookie-parser';
 
 import expressHandlebars from 'express-handlebars';
 
-import { start } from './parser.js';
-import { getDate } from './helpers.js';
+import { start } from './helpers/parser.js';
+import { getDate } from './helpers/helpers.js';
 
 const PORT = 3004;
 
@@ -31,21 +31,20 @@ const handlebars = expressHandlebars.create({
     getCommentDate: obj => obj.dateString,
     getCommentAutor: obj => obj.autor,
     getRatingString: obj => {
-      let arr = obj.my_rating
+      let arr = obj.my_rating;
       let sum = 0;
 
       for (const elem of arr) {
-        sum = sum + Number(elem)
+        sum = sum + Number(elem);
       }
-      return (sum / arr.length).toFixed(1)
+      return (sum / arr.length).toFixed(1);
     },
     getIsRating: obj => obj.isMy_rating,
-    getNumberOfComments: obj => obj.comments.length
+    getNumberOfComments: obj => obj.comments.length,
   }
 });
 
 let app = express();
-
 
 let secret = 'qwerty';
 app.use(cookieParser(secret));
@@ -62,12 +61,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 app.use(express.static(__dirname + '/public/'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-let movies = await start();
-movies = movies.filter(e => !e.error);
+let movies = await start(); // запуск парсинга
+movies = movies.filter(e => !e.error); // убираю элементы имеющие ошибки
 
-let arrFilmsYears = [... new Set(movies.map(e => e.year))].sort();
-let arrFilmRating = [... new Set(movies.map(e => e.rating))].sort();;
-let arrFilmCountry = [... new Set(movies.map(e => e.country))];
+let arrFilmsYears = [... new Set(movies.map(e => e.year))].sort();   // массив по годам
+let arrFilmRating = [... new Set(movies.map(e => e.rating))].sort(); // массив по рейтингу
+let arrFilmCountry = [... new Set(movies.map(e => e.country))];      // массив по странам
 
 // ----------------- pagination -----------------------------------------
 
@@ -81,7 +80,7 @@ for (let i = 1; i <= countPages; i++) {
   pages.push(i);
 }
 
-let PAGE;
+let PAGE; // номер выводимой страницы
 
 // === main ===========================
 
@@ -95,13 +94,14 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/initial/', (req, res) => {
-  res.render('initial')
+  res.render('initial');
 })
 
 app.post('/initial/', (req, res) => {
 
+  // запись имени пользователя
   res.cookie('_name_', req.body.name, {
-    maxAge: 1000 * 60 * 10,
+    maxAge: 1000 * 60 * 60,
   });
   res.redirect('/page/1');
 })
@@ -113,6 +113,7 @@ app.get('/page/:num', async (req, res) => {
   let page = req.params.num;
   PAGE = page;
 
+  // нумерация карточек на странице
   movies.map((el, ind) => el.id = ind + 1);
 
   let start = (page - 1) * countElem;
@@ -138,30 +139,30 @@ app.get('/page/:num', async (req, res) => {
 app.post('/filter/', (req, res) => {
 
   let filterFor = [...movies];
-  let y, c, r
+  let year, country, rating;
 
   if (req.body.year_select) {
-    y = req.body.year_select
+    year = req.body.year_select;
     filterFor = filterFor.filter(e => e.year === req.body.year_select);
   }
 
   if (req.body.country_select) {
-    c = req.body.country_select
+    country = req.body.country_select;
     filterFor = filterFor.filter(e => e.country === req.body.country_select);
   }
 
   if (req.body.rating_select) {
-    r = req.body.rating_select
+    rating = req.body.rating_select;
     filterFor = filterFor.filter(e => e.rating === req.body.rating_select);
   }
 
   filterFor.map((el, ind) => el.id = ind + 1);
 
-  let noFind = false
-  if (filterFor.length === 0) noFind = true
+  let noFind = false;;
+  if (filterFor.length === 0) noFind = true;
 
   res.render('allFilms', {
-    title: `применены фильтры ${y ? y : ''} ${c ? c : ''} ${r ? 'рейтинг ' + r : ''}`,
+    title: `применены фильтры ${year ? year : ''} ${country ? country : ''} ${rating ? 'рейтинг ' + rating : ''}`,
     movies: filterFor,
     years: arrFilmsYears,
     countrys: arrFilmCountry,
@@ -259,7 +260,7 @@ app.post('/rating/:film', (req, res) => {
 
   let filmTranslit = req.params.film;
 
-  res.cookie('rating_film', filmTranslit, { maxAge: 1000 * 60 * 10 });
+  res.cookie('rating_film', filmTranslit, { maxAge: 1000 * 60 * 60 });
 
   let rating = req.body.rating;
 
@@ -282,8 +283,6 @@ app.post('/rating/:film', (req, res) => {
     pageNum: PAGE,
   })
 })
-
-// год выпуска, страна, рейтинг.
 
 // ====================================
 

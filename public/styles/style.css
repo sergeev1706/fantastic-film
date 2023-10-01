@@ -58,15 +58,6 @@ h2 {
   margin-bottom: 20px;
 }
 
-.genre {
-  min-width: 130px;
-  padding: 20px;
-  margin-right: 10px;
-  border: 1px solid #989898;
-  border-radius: 20px;
-  background-color: #ffdede;
-}
-
 .item {
   position: relative;
   gap: 20px;
@@ -176,7 +167,7 @@ h2 {
   background-color: #aad5ff;
   border: 1px solid #3198fe;
   color: #153a5f;
-  border-radius: 10px;
+  border-radius: 20px;
   text-decoration: none;
 }
 
@@ -192,12 +183,12 @@ h2 {
   font-size: 30px;
 }
 
-.asd:hover {
+.top-pagination:hover {
   background-color: #7fbffe;
   transition: 400ms linear;
 }
 
-.asd:active {
+.top-pagination:active {
   background-color: #aad5ff;
   transition: 400ms linear;
 }

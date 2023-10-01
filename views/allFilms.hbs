@@ -1,24 +1,14 @@
 {{#if isFilter}}
 <div class="pagination-wrapper">
   <div class="pagination">
-    <a class="pagination-link asd" href="/page/{{goBackPage page}}">назад</a>
+    <a class="pagination-link top-pagination" href="/page/{{goBackPage page}}">назад</a>
     <p id="page" class="pagination-link page">{{page}}</p>
-    <a class="pagination-link asd" href="/page/{{goNextPage page allPages}}">вперёд</a>
+    <a class="pagination-link top-pagination" href="/page/{{goNextPage page allPages}}">вперёд</a>
   </div>
 </div>
 {{/if}}
 
 <div class="cards">
-
-  {{!-- <div class="genre">
-    <ul>
-      {{#each genres}}
-      <li>
-        <a href="{{getLink.}}">{{getTranslit.}}</a>
-      </li>
-      {{/each}}
-    </ul>
-  </div> --}}
 
   <div>
     {{#if noFind}}
@@ -33,9 +23,9 @@
         <div>
           <img class="image" width="200" src="{{getImagePath.}}">
           <h4>{{getYear.}}</h4>
-          <h4>Рейтинг: {{getRating.}}</h4>
+          <h4>Рейтинг Tvigle.ru: {{getRating.}}</h4>
           {{#if isMy_rating}}
-          <h4>Ещё один рейтинг: {{getRatingString.}}</h4>
+          <h4>Рейтинг этого сайта: {{getRatingString.}}</h4>
           {{/if}}
           {{#if isComments}}
           <h4>Комментарии к фильму: {{getNumberOfComments.}}</h4>
