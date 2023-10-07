@@ -2,6 +2,7 @@
 import puppeteer from 'puppeteer';
 
 export async function start() {
+
   const site = 'https://www.tvigle.ru/catalog/filmy/fantastika/';
 
   const browser = await puppeteer.launch({ headless: 'new' });
@@ -27,7 +28,7 @@ export async function start() {
     let allElem = await page.$$('div.styles_collectionList__qqJDT > a');
 
     for (let i = 1; i <= allElem.length; i++) {
-      // for (let i = 1; i <= 5; i++) {
+      // for (let i = 1; i <= 1; i++) {
       let selector = `div.styles_collectionList__qqJDT > a:nth-child(${i})`;
 
       await page.waitForSelector(selector);
@@ -41,11 +42,11 @@ export async function start() {
     return arr
   }
 
-  let movies = await getLinks();
+  let films = await getLinks();
 
   async function getData() {
 
-    for (const film of movies) {
+    for (const film of films) {
 
       try {
         await page.goto(film.link);
@@ -66,13 +67,8 @@ export async function start() {
         film.translit = film.link.split('/')[film.link.split('/').length - 2];
         film.comments = [];
         film.isComments = false;
-
-
         film.my_rating = [];
         film.isMy_rating = false;
-
-
-        console.log(film);
 
       } catch {
         console.log(`data loaded error`);
@@ -85,5 +81,5 @@ export async function start() {
 
   await browser.close();
 
-  return movies;
+  return films.filter(e => !e.error);
 }

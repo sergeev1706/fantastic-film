@@ -1,11 +1,15 @@
 
 import express from 'express';
+import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
 import expressHandlebars from 'express-handlebars';
 
 import { start } from './helpers/parser.js';
 import { getDate } from './helpers/helpers.js';
+
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 const PORT = 3004;
 
@@ -44,47 +48,34 @@ const handlebars = expressHandlebars.create({
   }
 });
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const secret = 'qwerty';
+
 let app = express();
 
-let secret = 'qwerty';
 app.use(cookieParser(secret));
-
 app.engine('hbs', handlebars.engine);
 app.set('view engine', 'hbs');
-
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import bodyParser from 'body-parser';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 app.use(express.static(__dirname + '/public/'));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-let movies = await start(); // запуск парсинга
-movies = movies.filter(e => !e.error); // убираю элементы имеющие ошибки
-
-let arrFilmsYears = [... new Set(movies.map(e => e.year))].sort();   // массив по годам
-let arrFilmRating = [... new Set(movies.map(e => e.rating))].sort(); // массив по рейтингу
-let arrFilmCountry = [... new Set(movies.map(e => e.country))];      // массив по странам
+let movies = [];
 
 // ----------------- pagination -----------------------------------------
 
-let countElem = 4; // количество выводимых карточек на странице
+let countElem = 5; // количество выводимых карточек на странице
 let countPages; // количество страниц
-
-countPages = Math.ceil(movies.length / countElem);
-
-let pages = [];
-for (let i = 1; i <= countPages; i++) {
-  pages.push(i);
-}
-
 let PAGE; // номер выводимой страницы
+
+function findFilm(request) {
+  return movies.filter(e => e.translit === request)[0];
+}
 
 // === main ===========================
 
 app.get('/', async (req, res) => {
+
+  movies.length === 0 ? movies = await start() : '';
 
   if (req.cookies._name_) {
     res.redirect('/page/1');
@@ -99,7 +90,7 @@ app.get('/initial/', (req, res) => {
 
 app.post('/initial/', (req, res) => {
 
-  // запись имени пользователя
+  // сохранение имени пользователя
   res.cookie('_name_', req.body.name, {
     maxAge: 1000 * 60 * 60,
   });
@@ -111,26 +102,33 @@ app.post('/initial/', (req, res) => {
 app.get('/page/:num', async (req, res) => {
 
   let page = req.params.num;
-  PAGE = page;
+  PAGE = page; // для возврата на прежнюю страницу
+
+  // для пагинации
+  let start = (page - 1) * countElem;
+  let end = page * countElem;
+
+  // число страниц
+  countPages = Math.ceil(movies.length / countElem);
+
+  let pages = [];
+  for (let i = 1; i <= countPages; i++) pages.push(i);
 
   // нумерация карточек на странице
   movies.map((el, ind) => el.id = ind + 1);
 
-  let start = (page - 1) * countElem;
-  let end = page * countElem;
-  let outputMovies = movies.slice(start, end);
-
   res.render('allFilms', {
     title: `Фильмы жанра фантастика, страница ${page}`,
-    movies: outputMovies,
+    movies: [...movies].slice(start, end),
     pages: pages,
     page,
     allPages: pages.length,
-    years: arrFilmsYears,
-    countrys: arrFilmCountry,
-    ratings: arrFilmRating,
     isFilter: true,
     isList: true,
+    // для фильтров
+    years: [... new Set(movies.map(e => e.year))].sort(),
+    ratings: [... new Set(movies.map(e => e.rating))].sort(),
+    countrys: [... new Set(movies.map(e => e.country))],
   })
 });
 
@@ -143,30 +141,28 @@ app.post('/filter/', (req, res) => {
 
   if (req.body.year_select) {
     year = req.body.year_select;
-    filterFor = filterFor.filter(e => e.year === req.body.year_select);
+    filterFor = filterFor.filter(e => e.year === year);
   }
 
   if (req.body.country_select) {
     country = req.body.country_select;
-    filterFor = filterFor.filter(e => e.country === req.body.country_select);
+    filterFor = filterFor.filter(e => e.country === country);
   }
 
   if (req.body.rating_select) {
     rating = req.body.rating_select;
-    filterFor = filterFor.filter(e => e.rating === req.body.rating_select);
+    filterFor = filterFor.filter(e => e.rating === rating);
   }
 
+  // нумерация в фильтрованном списке
   filterFor.map((el, ind) => el.id = ind + 1);
 
-  let noFind = false;;
+  let noFind = false;
   if (filterFor.length === 0) noFind = true;
 
   res.render('allFilms', {
-    title: `применены фильтры ${year ? year : ''} ${country ? country : ''} ${rating ? 'рейтинг ' + rating : ''}`,
+    title: `применены фильтры: ${year ? year : ''} ${country ? country : ''} ${rating ? 'рейтинг ' + rating : ''}`,
     movies: filterFor,
-    years: arrFilmsYears,
-    countrys: arrFilmCountry,
-    ratings: arrFilmRating,
     noFind,
     isFilter: false,
     pageNum: PAGE,
@@ -175,18 +171,12 @@ app.post('/filter/', (req, res) => {
 
 // === film page ======================
 
-app.get('/film/:name', (req, res) => {
-  let film;
-  for (const movie of movies) {
-    if (movie.translit === req.params.name) {
-      film = movie;
-    }
-  }
+app.get('/film/:film', (req, res) => {
 
   res.render('film', {
-    title: film.name,
-    film: film,
-    comments: film.comments,
+    title: findFilm(req.params.film).name,
+    film: findFilm(req.params.film),
+    comments: findFilm(req.params.film).comments,
     pageNum: PAGE,
     isList: false,
   })
@@ -195,31 +185,26 @@ app.get('/film/:name', (req, res) => {
 // === comments on the film ===========
 
 app.get('/comments/:film', (req, res) => {
+
   res.render('comments', {
-    film: req.params.film,
+    filmName: findFilm(req.params.film).name,
+    filmTranslit: req.params.film,
+    pageNum: PAGE,
   })
 })
 
 app.post('/comments/:film', (req, res) => {
 
-  let text = req.body.text;
-  let autor = req.cookies._name_;
+  let film = findFilm(req.params.film);
 
-  let film;
-  for (const movie of movies) {
-    if (movie.translit === req.params.film) {
-      film = movie;
-
-      if (text !== '') {
-        film.isComments = true;
-        film.comments.push({
-          text,
-          dateString: getDate(),
-          autor,
-        });
-        film.isComments = true;
-      }
-    }
+  if (req.body.text !== '') {
+    film.isComments = true;
+    film.comments.push({
+      dateString: getDate(),
+      text: req.body.text,
+      autor: req.cookies._name_,
+    });
+    film.isComments = true;
   }
 
   res.render('film', {
@@ -234,46 +219,21 @@ app.post('/comments/:film', (req, res) => {
 
 app.get('/rating/:film', (req, res) => {
 
-  let filmTranslit = req.params.film;
-
-  let filmName;
-  for (const thisFilm of movies) {
-    if (thisFilm.translit === filmTranslit)
-      filmName = thisFilm.name;
-  }
-
-  if (req.cookies.rating_film === filmTranslit) {
-    res.render('notRating', {
-      filmName,
-      filmTranslit,
-    })
-
-  } else {
-    res.render('rating', {
-      filmName,
-      filmTranslit,
-    })
-  }
+  res.render(req.cookies.rating_film === req.params.film ? 'notRating' : 'rating', {
+    filmName: findFilm(req.params.film).name,
+    filmTranslit: req.params.film,
+    pageNum: PAGE,
+  })
 })
 
 app.post('/rating/:film', (req, res) => {
 
-  let filmTranslit = req.params.film;
+  res.cookie('rating_film', req.params.film, { maxAge: 1000 * 60 * 60 });
 
-  res.cookie('rating_film', filmTranslit, { maxAge: 1000 * 60 * 60 });
-
-  let rating = req.body.rating;
-
-  let film;
-  for (const movie of movies) {
-    if (movie.translit === filmTranslit) {
-      film = movie;
-
-      if (rating !== '') {
-        film.my_rating.push(rating);
-        film.isMy_rating = true;
-      }
-    }
+  let film = findFilm(req.params.film);
+  if (req.body.rating !== '') {
+    film.my_rating.push(req.body.rating);
+    film.isMy_rating = true;
   }
 
   res.render('film', {
@@ -282,6 +242,10 @@ app.post('/rating/:film', (req, res) => {
     comments: film.comments,
     pageNum: PAGE,
   })
+})
+
+app.get('/test/', (req, res) => {
+  res.send('test page')
 })
 
 // ====================================

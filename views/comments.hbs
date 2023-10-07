@@ -1,9 +1,11 @@
 <div class="center">
   <h1>
-    comments {{film}}
+    комментарии к фильму
+    <br>
+    {{filmName}}
   </h1>
 
-  <form action="/comments/{{film}}" method="POST">
+  <form action="/comments/{{filmTranslit}}" method="POST">
     <textarea autofocus id="textarea" cols="100" rows="10" name="text"></textarea><br />
     <br />
     <button class="add_comment" type="submit">добавить комментарии</button>
