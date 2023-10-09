@@ -81,7 +81,7 @@ async function writeFile() {
 async function readFile() {
   try {
     let json = await fs.promises.readFile('fantastika.txt', 'utf8');
-    movies = JSON.parse(json)
+    movies = JSON.parse(json);
   } catch (err) {
     console.log('Ошибка чтения файла');
   }
@@ -114,6 +114,7 @@ app.get('/', async (req, res) => {
 app.get('/initial/', (req, res) => {
   res.render('initial', {
     title: 'авторизация',
+
     isHeader: false,
   });
 })
@@ -141,6 +142,7 @@ app.get('/page/:num', async (req, res) => {
   // число страниц
   countPages = Math.ceil(movies.length / countElem);
 
+  // массив страниц
   let pages = [];
   for (let i = 1; i <= countPages; i++) pages.push(i);
 
@@ -149,6 +151,7 @@ app.get('/page/:num', async (req, res) => {
 
   res.render('allFilms', {
     title: `Фильмы жанра фантастика, страница ${page}`,
+
     movies: [...movies].slice(start, end),
     pages: pages,
     page,
@@ -156,6 +159,7 @@ app.get('/page/:num', async (req, res) => {
     isFilter: true,
     isList: true,
     isHeader: true,
+
     // для фильтров
     years: [... new Set(movies.map(e => e.year))].sort(),
     ratings: [... new Set(movies.map(e => e.rating))].sort(),
@@ -170,6 +174,7 @@ app.post('/filter/', (req, res) => {
   let filterFor = [...movies];
   let year, country, rating;
 
+  // проверка фильтров
   if (req.body.year_select) {
     year = req.body.year_select;
     filterFor = filterFor.filter(e => e.year === year);
@@ -189,11 +194,13 @@ app.post('/filter/', (req, res) => {
   filterFor.map((el, ind) => el.id = ind + 1);
 
   let noFind = false;
+  // если по фильтрам ничего нет
   if (filterFor.length === 0) noFind = true;
 
   if (req.body.year_select || req.body.country_select || req.body.rating_select) {
     res.render('allFilms', {
       title: `применены фильтры: ${year ? year : ''}${country ? + country : ''}${rating ? ' рейтинг ' + rating : ''}`,
+
       movies: filterFor,
       noFind,
       isFilter: false,
@@ -211,6 +218,7 @@ app.get('/film/:film', (req, res) => {
 
   res.render('film', {
     title: findFilm(req.params.film).name,
+
     film: findFilm(req.params.film),
     comments: findFilm(req.params.film).comments,
     pageNum: PAGE,
@@ -250,6 +258,7 @@ app.post('/comments/:film', (req, res) => {
 
   res.render('film', {
     title: film.name,
+
     film: film,
     comments: film.comments,
     pageNum: PAGE,
@@ -285,6 +294,7 @@ app.post('/rating/:film', (req, res) => {
 
   res.render('film', {
     title: film.name,
+
     film: film,
     comments: film.comments,
     pageNum: PAGE,
