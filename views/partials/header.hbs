@@ -1,29 +1,31 @@
 <div class="container">
   <nav class="nav">
     <div>
+      {{#if isHeader}}
       {{#unless isList}}
       <a href="/page/{{pageNum}}">назад</a>
       {{/unless}}
+      {{/if}}
     </div>
 
     {{#if isList}}
     <form action="/filter/" class="header_form" method="POST">
 
-      <select name="year_select" id="">
+      <select name="year_select">
         <option value="">year</option>
         {{#each years}}
         <option>{{.}}</option>
         {{/each}}
       </select>
 
-      <select name="country_select" id="">
+      <select name="country_select">
         <option value="">country</option>
         {{#each countrys}}
         <option value="{{.}}">{{.}}</option>
         {{/each}}
       </select>
 
-      <select name="rating_select" id="">
+      <select name="rating_select">
         <option value="">rating</option>
         {{#each ratings}}
         <option value="{{.}}">{{.}}</option>

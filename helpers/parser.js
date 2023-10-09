@@ -1,4 +1,3 @@
-
 import puppeteer from 'puppeteer';
 
 export async function start() {
@@ -16,7 +15,7 @@ export async function start() {
   async function getParam(selector) {
     await page.waitForSelector(selector, { timeout: 1000 });
     let result = await page.$eval(selector, e => e.textContent);
-    return result
+    return result;
   }
 
   async function getLinks() {
@@ -28,7 +27,6 @@ export async function start() {
     let allElem = await page.$$('div.styles_collectionList__qqJDT > a');
 
     for (let i = 1; i <= allElem.length; i++) {
-      // for (let i = 1; i <= 1; i++) {
       let selector = `div.styles_collectionList__qqJDT > a:nth-child(${i})`;
 
       await page.waitForSelector(selector);
@@ -39,7 +37,7 @@ export async function start() {
 
       arr.push({ link, imagePath });
     }
-    return arr
+    return arr;
   }
 
   let films = await getLinks();

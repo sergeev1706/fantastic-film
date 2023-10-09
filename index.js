@@ -1,5 +1,8 @@
 
 import express from 'express';
+
+import fs from 'fs';
+
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
@@ -61,21 +64,45 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 let movies = [];
 
-// ----------------- pagination -----------------------------------------
+function findFilm(request) {
+  return movies.filter(e => e.translit === request)[0];
+}
+
+async function writeFile() {
+  let json = JSON.stringify(movies);
+
+  fs.writeFile('fantastika.txt', json, function (err) {
+    if (err) {
+      console.log('Ошибка записи файла');
+    }
+  });
+}
+
+async function readFile() {
+  try {
+    let json = await fs.promises.readFile('fantastika.txt', 'utf8');
+    movies = JSON.parse(json)
+  } catch (err) {
+    console.log('Ошибка чтения файла');
+  }
+}
+
+// === pagination ===================== 
 
 let countElem = 5; // количество выводимых карточек на странице
 let countPages; // количество страниц
 let PAGE; // номер выводимой страницы
 
-function findFilm(request) {
-  return movies.filter(e => e.translit === request)[0];
-}
-
 // === main ===========================
 
 app.get('/', async (req, res) => {
 
-  movies.length === 0 ? movies = await start() : '';
+  if (fs.existsSync(__dirname + '/fantastika.txt')) {
+    await readFile();
+  } else {
+    movies = await start();
+    await writeFile();
+  }
 
   if (req.cookies._name_) {
     res.redirect('/page/1');
@@ -85,12 +112,15 @@ app.get('/', async (req, res) => {
 });
 
 app.get('/initial/', (req, res) => {
-  res.render('initial');
+  res.render('initial', {
+    title: 'авторизация',
+    isHeader: false,
+  });
 })
 
 app.post('/initial/', (req, res) => {
 
-  // сохранение имени пользователя
+  // сохранение данныхимени пользователя
   res.cookie('_name_', req.body.name, {
     maxAge: 1000 * 60 * 60,
   });
@@ -125,6 +155,7 @@ app.get('/page/:num', async (req, res) => {
     allPages: pages.length,
     isFilter: true,
     isList: true,
+    isHeader: true,
     // для фильтров
     years: [... new Set(movies.map(e => e.year))].sort(),
     ratings: [... new Set(movies.map(e => e.rating))].sort(),
@@ -160,13 +191,18 @@ app.post('/filter/', (req, res) => {
   let noFind = false;
   if (filterFor.length === 0) noFind = true;
 
-  res.render('allFilms', {
-    title: `применены фильтры: ${year ? year : ''} ${country ? country : ''} ${rating ? 'рейтинг ' + rating : ''}`,
-    movies: filterFor,
-    noFind,
-    isFilter: false,
-    pageNum: PAGE,
-  })
+  if (req.body.year_select || req.body.country_select || req.body.rating_select) {
+    res.render('allFilms', {
+      title: `применены фильтры: ${year ? year : ''}${country ? + country : ''}${rating ? ' рейтинг ' + rating : ''}`,
+      movies: filterFor,
+      noFind,
+      isFilter: false,
+      pageNum: PAGE,
+      isHeader: true,
+    })
+  } else {
+    res.redirect(`/page/${PAGE}`);
+  }
 })
 
 // === film page ======================
@@ -179,6 +215,7 @@ app.get('/film/:film', (req, res) => {
     comments: findFilm(req.params.film).comments,
     pageNum: PAGE,
     isList: false,
+    isHeader: true,
   })
 })
 
@@ -190,6 +227,7 @@ app.get('/comments/:film', (req, res) => {
     filmName: findFilm(req.params.film).name,
     filmTranslit: req.params.film,
     pageNum: PAGE,
+    isHeader: true,
   })
 })
 
@@ -207,11 +245,15 @@ app.post('/comments/:film', (req, res) => {
     film.isComments = true;
   }
 
+  // сохранение коментариев
+  writeFile();
+
   res.render('film', {
     title: film.name,
     film: film,
     comments: film.comments,
     pageNum: PAGE,
+    isHeader: true,
   })
 })
 
@@ -223,6 +265,7 @@ app.get('/rating/:film', (req, res) => {
     filmName: findFilm(req.params.film).name,
     filmTranslit: req.params.film,
     pageNum: PAGE,
+    isHeader: true,
   })
 })
 
@@ -231,16 +274,21 @@ app.post('/rating/:film', (req, res) => {
   res.cookie('rating_film', req.params.film, { maxAge: 1000 * 60 * 60 });
 
   let film = findFilm(req.params.film);
+
   if (req.body.rating !== '') {
     film.my_rating.push(req.body.rating);
     film.isMy_rating = true;
   }
+
+  // сохранение рейтинга
+  writeFile();
 
   res.render('film', {
     title: film.name,
     film: film,
     comments: film.comments,
     pageNum: PAGE,
+    isHeader: true,
   })
 })
 
