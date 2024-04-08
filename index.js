@@ -268,6 +268,7 @@ app.post('/comments/:film', (req, res) => {
 
 // === rating of the film =========================
 
+
 app.get('/rating/:film', (req, res) => {
 
   res.render(req.cookies.rating_film === req.params.film ? 'notRating' : 'rating', {
